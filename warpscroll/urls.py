@@ -17,8 +17,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from travel_planner import api_views
+from travel_planner.views import home
 
 urlpatterns = [
+    url(r'^$', home),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(api_views.router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
