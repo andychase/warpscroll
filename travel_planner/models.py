@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
+import uuid
 
 
 class Trip(models.Model):
@@ -9,7 +9,8 @@ class Trip(models.Model):
     destination = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
+    view_only_token = models.UUIDField(default=uuid.uuid4)
 
     def __str__(self):
         return self.destination
