@@ -1,0 +1,20 @@
+{% if title and trips %}
+    <h3>{{ title }}</h3>
+{% endif %}
+{% for trip in trips %}
+    <div class="card">
+        <h3 class="card-header">
+            <input type="text" style="width: 100%" title="Destination" placeholder="Destination"
+                    {% if trip.destination %}
+                   value="{{ trip.destination }}"
+                    {% endif %}
+            />
+        </h3>
+        <div class="card-block">
+            <p class="card-text">
+                {{ trip.start_date }} -
+                {{ trip.end_date }}
+            </p>
+        </div>
+    </div>
+{% endfor %}
