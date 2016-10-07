@@ -1,7 +1,37 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
+from rest_framework import status
+from rest_framework.response import Response
 
 from travel_planner.models import Trip
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ('url', 'username', 'password', 'email')
+
+
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.none()
+    serializer_class = UserSerializer
+
+    @staticmethod
+    def create(request):
+        if get_user_model().objects.filter(username=request.POST['username']).count():
+            return Response({}, status=status.HTTP_409_CONFLICT)
+        user = get_user_model().objects.create_user(
+            username=request.POST['username'],
+            email=request.POST['email'],
+            password=request.POST['password']
+        )
+        return Response({"username": user.username}, status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def perform_create(serializer):
+        serializer.save()
 
 
 class UserTripPermission(permissions.BasePermission):
@@ -39,3 +69,4 @@ class UserTripsViewSet(viewsets.ModelViewSet):
 
 router = routers.DefaultRouter()
 router.register(r'user_trips', UserTripsViewSet, "trip")
+router.register(r'user', UserViewSet, "user")
