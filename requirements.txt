@@ -3,3 +3,4 @@ djangorestframework==3.4.7
 gunicorn==19.6.0
 dj-database-url==0.4.1
 whitenoise==3.2.2
+django-filter==0.15.2
