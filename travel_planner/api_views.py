@@ -1,6 +1,7 @@
 import django_filters
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from rest_framework import exceptions
 from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
@@ -73,7 +74,7 @@ class UserTripsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_anonymous:
-            return Trip.objects.none()
+            raise exceptions.PermissionDenied("Not logged in.")
         else:
             return Trip.objects.filter(owner=self.request.user)
 
