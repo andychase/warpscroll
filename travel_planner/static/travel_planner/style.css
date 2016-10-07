@@ -8,3 +8,11 @@
     margin-bottom: 4px;
     padding-bottom: 15px;
 }
+
+.trip-description {
+    display: block;
+    width: 100%;
+    border: none;
+    border-top: dashed 1px #dfdfdf;
+    padding-left: 20px;
+}
