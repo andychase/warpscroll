@@ -27,23 +27,31 @@ register.filter('days_left', days_left)
 
 
 def home(request):
-    return render(
-        request,
-        "homepage.html",
-        {
-            "current_trips": Trip.objects.filter(
-                owner=request.user,
-                start_date__lte=date.today(),
-                end_date__gte=date.today(),
-            ),
-            "upcoming_trips": Trip.objects.filter(
-                owner=request.user,
-                start_date__gt=date.today()
-            ),
-            "past_trips": Trip.objects.filter(
-                owner=request.user,
-                end_date__lt=date.today(),
-            ).order_by("-start_date"),
-            "current_day": date.today()
-        }
-    )
+    if request.user.is_anonymous:
+        return render(
+            request,
+            "homepage.html", {
+                "user": request.user,
+            }
+        )
+    else:
+        return render(
+            request,
+            "homepage.html", {
+                "user": request.user,
+                "current_trips": Trip.objects.filter(
+                    owner=request.user,
+                    start_date__lte=date.today(),
+                    end_date__gte=date.today(),
+                ),
+                "upcoming_trips": Trip.objects.filter(
+                    owner=request.user,
+                    start_date__gt=date.today()
+                ),
+                "past_trips": Trip.objects.filter(
+                    owner=request.user,
+                    end_date__lt=date.today(),
+                ).order_by("-start_date"),
+                "current_day": date.today()
+            }
+        )

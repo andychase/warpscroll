@@ -6,6 +6,8 @@ from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
 from rest_framework import status
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import views
 from rest_framework.response import Response
 
 from travel_planner.models import Trip
@@ -20,16 +22,22 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.none()
     serializer_class = UserSerializer
+    authentication_classes = []
+    permission_classes = (AllowAny,)
 
     @staticmethod
     def create(request):
         if get_user_model().objects.filter(username=request.POST['username']).count():
             return Response({}, status=status.HTTP_409_CONFLICT)
+        if request.POST.get('password-confirm') and request.POST['password'] != request.POST['password-confirm']:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
         user = get_user_model().objects.create_user(
             username=request.POST['username'],
-            email=request.POST['email'],
             password=request.POST['password']
         )
+        if request.GET.get('next'):
+            request._request.POST = request.POST
+            return views.login(request._request)
         return Response({"username": user.username}, status=status.HTTP_201_CREATED)
 
     @staticmethod

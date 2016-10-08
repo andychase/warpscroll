@@ -1,0 +1,45 @@
+{% if request.user.is_anonymous %}
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Login</h5>
+            <form method="post" action="{% url 'rest_framework:login' %}?next=/">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Username:
+                        <input class="form-control" type="text" name="username">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Password:
+                        <input class="form-control" type="password" name="password">
+                    </label>
+                </div>
+                <input class="btn btn-outline-primary" type="submit" value="Login"/>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h5 class="register">Register</h5>
+            <form method="post" action="{% url 'user-list' %}?next=/">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Username:
+                        <input class="form-control" type="text" name="username">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Password:
+                        <input class="form-control" type="password" name="password">
+                    </label>
+                    <label>
+                        <input class="form-control" type="password" name="password-confirm"
+                               placeholder="Confirm password">
+                    </label>
+                </div>
+                <input class="btn btn-outline-primary" type="submit" value="Register"/>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <span style="margin-right: 10px">{{ user.username }}</span>
+    <a class="btn btn-outline-secondary" href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
+{% endif %}
