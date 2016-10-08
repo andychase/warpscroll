@@ -29,7 +29,7 @@ register.filter('days_left', days_left)
 def home(request):
     return render(
         request,
-        "base.html",
+        "homepage.html",
         {
             "current_trips": Trip.objects.filter(
                 owner=request.user,

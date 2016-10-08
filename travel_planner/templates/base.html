@@ -7,40 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <meta name="description" content="">
-    <meta name="author" content="">
 
-    <title>Warpscroll: plan your trip through anywhere.</title>
+    <title>{% block title %}{% endblock %}</title>
 
     <link href="{% static "bootstrap/css/bootstrap.css" %}" rel="stylesheet">
-
     <link href="{% static "travel_planner/style.css" %}" rel="stylesheet">
 </head>
 
 <body>
-{% with col_style="col-md-8 offset-md-2" %}
-    <div class="container-fluid">
-        <div class="row header-section">
-            <div class="row body-text page-section">
-                <div class="{{ col_style }}">
-                    <h2>Warp Scroll</h2>
-
-                    <h4>Plan your trip through anything</h4>
-                </div>
-            </div>
-            <div class="row body-text page-section">
-                <div class="{{ col_style }}">
-                    Login * Register -- save your plans
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="{{ col_style }}">
-                {% include "trip_list.html" with trips=current_trips title="Current Trips" %}
-                {% include "trip_list.html" with trips=upcoming_trips title="Upcoming Trips" %}
-                {% include "trip_list.html" with trips=past_trips title="Past Trips" %}
-            </div>
-        </div>
-    </div>
-{% endwith %}
+{% block content %}{% endblock %}
 </body>
 </html>
