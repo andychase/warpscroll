@@ -20,7 +20,7 @@ def home(request):
                     owner=request.user,
                     start_date__lte=date.today(),
                     end_date__gte=date.today(),
-                ).order_by("start_date"),
+                ).order_by("-start_date"),
                 "upcoming_trips": Trip.objects.filter(
                     owner=request.user,
                     start_date__gt=date.today()

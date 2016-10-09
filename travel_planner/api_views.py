@@ -84,7 +84,7 @@ class UserTripsViewSet(viewsets.ModelViewSet):
         if self.request.user.is_anonymous:
             raise exceptions.PermissionDenied("Not logged in.")
         else:
-            return Trip.objects.filter(owner=self.request.user)
+            return Trip.objects.filter(owner=self.request.user).order_by("-start_date")
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
