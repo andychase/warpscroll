@@ -20,15 +20,15 @@ def home(request):
                     owner=request.user,
                     start_date__lte=date.today(),
                     end_date__gte=date.today(),
-                ).order_by("-start_date"),
+                ).order_by("-start_date", "-id"),
                 "upcoming_trips": Trip.objects.filter(
                     owner=request.user,
                     start_date__gt=date.today()
-                ).order_by("-start_date"),
+                ).order_by("-start_date", "-id"),
                 "past_trips": Trip.objects.filter(
                     owner=request.user,
                     end_date__lt=date.today(),
-                ).order_by("-start_date"),
+                ).order_by("-start_date", "-id"),
                 "current_day": date.today()
             }
         )

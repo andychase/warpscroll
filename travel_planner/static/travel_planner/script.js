@@ -116,11 +116,11 @@ var AppView = Backbone.View.extend({
         var start_date = get_date_only(trip.get("start_date"));
         var end_date = get_date_only(trip.get("end_date"));
         if (start_date <= today && end_date >= today)
-            this.current.append(view.render().el);
+            this.current.prepend(view.render().el);
         else if (start_date <= end_date && end_date < today)
-            this.past.append(view.render().el);
+            this.past.prepend(view.render().el);
         else
-            this.upcoming.append(view.render().el);
+            this.upcoming.prepend(view.render().el);
     },
     addOne: function (trip) {
         var view = new TripView({model: trip});
