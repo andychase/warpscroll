@@ -1,5 +1,10 @@
 {% if title and trips %}
-    <h3>{{ title }}</h3>
+    <h3>{{ title }}
+    {% if upcoming %}
+        <a href="" class="btn btn-outline-info btn-sm pull-xs-right">Print travel plan for next month</a>
+    {% endif %}
+    </h3>
+
 {% endif %}
 {% for trip in trips %}
     <div class="card trip-card">

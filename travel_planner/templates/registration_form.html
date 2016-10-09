@@ -41,5 +41,5 @@
     </div>
 {% else %}
     <span style="margin-right: 10px">{{ user.username }}</span>
-    <a class="btn btn-outline-secondary" href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
+    <a class="btn btn-outline-secondary logout-button" href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
 {% endif %}
