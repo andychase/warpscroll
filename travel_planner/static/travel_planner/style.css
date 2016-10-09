@@ -32,3 +32,17 @@
 .logout-button {
     vertical-align: inherit;
 }
+
+.add-dest {
+    margin: 0 .25rem;
+}
+
+.remove-dest {
+}
+
+.edit-start-date, .edit-end-date {
+    border: none;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+

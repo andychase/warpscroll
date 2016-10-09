@@ -1,8 +1,9 @@
 {% if title and trips %}
     <h3>{{ title }}
-    {% if upcoming %}
-        <a href="" class="btn btn-outline-info btn-sm pull-xs-right">Print travel plan for next month</a>
-    {% endif %}
+        {% if upcoming %}
+            <a href="" class="btn btn-outline-info btn-sm pull-xs-right print-plan">Print travel plan for next month</a>
+            <a href="" class="btn btn-outline-warning btn-sm pull-xs-right add-dest">Add destination</a>
+        {% endif %}
     </h3>
 
 {% endif %}
@@ -17,15 +18,17 @@
         </h3>
         <div class="card-block">
             <p class="card-text">
-                {{ trip.start_date }}{% if trip.end_date > trip.start_date %} -
-                    {{ trip.end_date }}
-                {% endif %}
+                <input type="text" name="start_date" value="{{ trip.start_date }}" title="start date" class="edit-end-date">
+                -
+                <input type="text" name="end_date" class="edit-end-date"
+                       value="{% if trip.end_date > trip.start_date %}{{ trip.end_date }}{% endif %}"
+                       title="end date">
                 {% if trip.start_date|days_left %}
                     <span class="tag tag-default tag-pill">
                         {{ trip.start_date|days_left }}
                     </span>
                 {% endif %}
-                <a href="" class="btn btn-outline-warning btn-sm pull-xs-right">edit</a>
+                <a href="" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest">Remove</a>
             </p>
         </div>
         <textarea class="trip-description" title="trip description" placeholder="Trip comments"></textarea>
