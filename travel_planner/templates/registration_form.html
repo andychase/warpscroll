@@ -1,48 +1,50 @@
-{% if request.user.is_anonymous %}
-    <div class="row">
-        <div class="col-md-6">
-            <h5>Login</h5>
-            <form method="post" action="{% url 'rest_framework:login' %}?next=/">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label>Username:
-                        <input class="form-control" type="text" name="username">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Password:
-                        <input class="form-control" type="password" name="password">
-                    </label>
-                </div>
-                <input class="btn btn-outline-primary" type="submit" value="Login"/>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <h5 class="register">Register</h5>
-            <form method="post" action="{% url 'user-list' %}?next=/">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label>Username:
-                        <input class="form-control" type="text" name="username">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Password:
-                        <input class="form-control" type="password" name="password">
-                    </label>
-                    <label>
-                        <input class="form-control" type="password" name="password-confirm"
-                               placeholder="Confirm password">
-                    </label>
-                </div>
-                <input class="btn btn-outline-primary" type="submit" value="Register"/>
-            </form>
-        </div>
+<div class="row" id="login-menu" style="{% if not request.user.is_anonymous %}display: none;{% endif %}">
+    <div class="col-md-6">
+        <h5>Login</h5>
+        <form method="post" action="{% url 'rest_framework:login' %}?next=/" id="login-form">
+            <input type="hidden" id="ajax_login" value="{% url 'login' %}"/>
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username:
+                    <input class="form-control" type="text" name="username">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Password:
+                    <input class="form-control" type="password" name="password">
+                </label>
+            </div>
+            <div class="alert alert-danger login-error-message" role="alert" style="display: none;"></div>
+            <input class="btn btn-outline-primary" type="submit" value="Login"/>
+        </form>
     </div>
-{% else %}
-    <span style="margin-right: 10px">{{ user.username }}</span>
+    <div class="col-md-6">
+        <h5 class="register">Register</h5>
+        <form method="post" action="{% url 'user-list' %}?next=/" id="register-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username:
+                    <input class="form-control" type="text" name="username">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Password:
+                    <input class="form-control" type="password" name="password">
+                </label>
+                <label>
+                    <input class="form-control" type="password" name="password-confirm"
+                           placeholder="Confirm password">
+                </label>
+            </div>
+            <input class="btn btn-outline-primary" type="submit" value="Register"/>
+        </form>
+    </div>
+</div>
+
+<div style="{% if request.user.is_anonymous %}display: none;{% endif %}" id="user-info">
+    <span style="margin-right: 10px" id="username-field">{{ user.username }}</span>
     {% if user.is_staff %}
-        <a class="btn btn-outline-secondary logout-button" href="{% url 'admin:index' %}">Admin</a>
+        <a class="btn btn-outline-secondary" href="{% url 'admin:index' %}">Admin</a>
     {% endif %}
     <a class="btn btn-outline-secondary logout-button" href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
-{% endif %}
+</div>

@@ -1,7 +1,12 @@
 from datetime import date, datetime
+
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseNotFound, HttpResponseBadRequest
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
+
 from travel_planner.models import Trip
 
 
@@ -73,3 +78,12 @@ def add_trip(request):
 def remove_trip(request, trip):
     trip.delete()
     return redirect('home')
+
+
+def ajax_login(request):
+    form = AuthenticationForm(request, data=request.POST)
+    if form.is_valid():
+        login(request, form.get_user())
+        return JsonResponse({"OK": True})
+    else:
+        return HttpResponseBadRequest("Incorrect username or password")

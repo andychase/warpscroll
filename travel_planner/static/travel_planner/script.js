@@ -14,18 +14,21 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-var csrftoken = getCookie('csrftoken');
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
-$.ajaxSetup({
-    beforeSend: function (xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+function setupCSRFToken() {
+    var csrftoken = getCookie('csrftoken');
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
         }
-    }
-});
+    });
+}
+setupCSRFToken();
 function get_date_only(date) {
     if (!date)
         return null;
@@ -140,7 +143,6 @@ var AppView = Backbone.View.extend({
         this.listenTo(trips, 'reset', this.addAll);
         this.listenTo(trips, 'sort', this.addAll);
         this.listenTo(trips, 'all', this.render);
-        trips.fetch();
     },
     sortIntoStacks: function (trip, view) {
         var today = get_date_only(dateToDateString(new Date()));
@@ -163,10 +165,79 @@ var AppView = Backbone.View.extend({
     }
 });
 
+function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
+    $loginForm.submit(function (e) {
+        e.preventDefault();
+        $loginForm.find("input[type=submit]").val("Logging in...");
+        var username = $loginForm.find("input[name=username]").val();
+        $.post(
+            $loginForm.find("#ajax_login").val(),
+            {
+                username: username,
+                password: $loginForm.find("input[name=password]").val()
+            },
+            function (data) {
+                $loginMenu.hide();
+                $userInfo.show();
+                $("#username-field").html(username);
+                $tripList.show();
+                setupCSRFToken();
+                trips.fetch();
+                // Cleanup login form in case user wants to log in again
+                $loginForm.find("input[name=username]").val("");
+                $loginForm.find("input[name=password]").val("");
+                $loginForm.find("input[type=submit]").val("Login");
+            }
+        ).fail(function (xhr, status, error) {
+            $loginForm.find(".login-error-message").show();
+            if (xhr.responseText)
+                $loginForm.find(".login-error-message").html(xhr.responseText);
+            else if (xhr.status == 0)
+                $loginForm.find(".login-error-message").html("Couldn't communicate with server.");
+            else
+                $loginForm.find(".login-error-message").html(xhr.statusText);
+            $loginForm.find("input[type=submit]").val("Log in");
+        });
+
+    });
+}
+
+function prepareLogout($loginMenu, $userInfo, $tripList) {
+    var $logoutButton = $userInfo.find(".logout-button");
+    $logoutButton.click(function (e) {
+        e.preventDefault();
+        $.get($logoutButton.attr("href"), function () {
+            trips.reset([]);
+            $loginMenu.show();
+            $userInfo.hide();
+            $("#username-field").html("");
+            $tripList.hide();
+            setupCSRFToken();
+        });
+    });
+}
+
 $(function () {
     var app = new AppView();
     $(".add-dest").click(function (e) {
         trips.create();
         e.preventDefault();
     });
+
+    var $loginMenu = $("#login-menu");
+    var $loginForm = $("#login-form");
+    var $registerForm = $("#register-form");
+    var $userInfo = $("#user-info");
+    var $tripList = $("#trip-list");
+    prepareLogin($loginMenu, $loginForm, $userInfo, $tripList);
+    prepareLogout($loginMenu, $userInfo, $tripList);
+
+    $registerForm.submit(function (e) {
+        e.preventDefault();
+    });
+
+    if ($loginMenu.is(':visible')) {
+    } else {
+        trips.fetch();
+    }
 });

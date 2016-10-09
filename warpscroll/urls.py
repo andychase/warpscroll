@@ -18,13 +18,14 @@ from django.contrib import admin
 from rest_framework.authtoken.views import obtain_auth_token
 
 from travel_planner import api_views
-from travel_planner.views import home, save_trip, add_trip, remove_trip
+from travel_planner.views import home, save_trip, add_trip, remove_trip, ajax_login
 
 urlpatterns = [
     url(r'^$', home, name='home'),
     url(r'^save-trip/$', save_trip, name='save_trip'),
     url(r'^add-trip/$', add_trip, name='add_trip'),
     url(r'^remove-trip/$', remove_trip, name='remove_trip'),
+    url(r'^login/$', ajax_login, name='login'),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(api_views.router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

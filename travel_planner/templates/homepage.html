@@ -20,14 +20,13 @@
         </div>
         <div class="row">
             <div class="{{ col_style }}">
-                <div id="trip-list">
-                    {% if not user.is_anonymous %}
-                        {% include 'add_destination.html' %}
-                        <a href="" class="btn btn-outline-info btn-sm pull-xs-right print-plan">Print travel plan for next month</a>
-                        {% include "trip_list.html" with trips=current_trips title="Current Trips" class="current-trips" %}
-                        {% include "trip_list.html" with trips=upcoming_trips title="Upcoming Trips" upcoming=True class="upcoming-trips" %}
-                        {% include "trip_list.html" with trips=past_trips title="Past Trips" class="past-trips" %}
-                    {% endif %}
+                <div id="trip-list" style="{% if user.is_anonymous %}display: none;{% endif %}">
+                    {% include 'add_destination.html' %}
+                    <a href="" class="btn btn-outline-info btn-sm pull-xs-right print-plan">Print travel plan for next
+                        month</a>
+                    {% include "trip_list.html" with trips=current_trips title="Current Trips" class="current-trips" %}
+                    {% include "trip_list.html" with trips=upcoming_trips title="Upcoming Trips" upcoming=True class="upcoming-trips" %}
+                    {% include "trip_list.html" with trips=past_trips title="Past Trips" class="past-trips" %}
                 </div>
             </div>
         </div>
