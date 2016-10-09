@@ -41,5 +41,8 @@
     </div>
 {% else %}
     <span style="margin-right: 10px">{{ user.username }}</span>
+    {% if user.is_staff %}
+        <a class="btn btn-outline-secondary logout-button" href="{% url 'admin:index' %}">Admin</a>
+    {% endif %}
     <a class="btn btn-outline-secondary logout-button" href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
 {% endif %}
