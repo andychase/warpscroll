@@ -20,3 +20,10 @@
 .register {
     margin-top: 10px;
 }
+
+.trip-card .card-block {
+    padding: 0 1.25rem .25rem 1.25rem;
+}
+.trip-card .tag {
+    vertical-align: text-bottom;
+}
