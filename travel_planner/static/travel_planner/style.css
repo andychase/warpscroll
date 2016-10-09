@@ -33,7 +33,7 @@
     vertical-align: inherit;
 }
 
-.add-dest {
+.add-dest, .save-dest {
     margin: 0 .25rem;
 }
 

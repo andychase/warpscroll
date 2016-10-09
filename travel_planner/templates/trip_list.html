@@ -9,29 +9,36 @@
 {% endif %}
 {% for trip in trips %}
     <div class="card trip-card">
-        <h3 class="card-header">
-            <input type="text" style="width: 100%" title="Destination" placeholder="Destination"
-                    {% if trip.destination %}
-                   value="{{ trip.destination }}"
-                    {% endif %}
-            />
-        </h3>
-        <div class="card-block">
-            <p class="card-text">
-                <input type="text" name="start_date" value="{{ trip.start_date }}"
-                       title="start date" class="edit-end-date datepicker" data-date-format="M. d, yyyy">
-                -
-                <input type="text" name="end_date" class="edit-end-date datepicker"
-                       value="{% if trip.end_date > trip.start_date %}{{ trip.end_date }}{% endif %}"
-                       title="end date"  data-date-format="M. d, yyyy">
-                {% if trip.start_date|days_left %}
-                    <span class="tag tag-default tag-pill">
+        <form method="post" action="{% url 'save_trip' %}">
+            {% csrf_token %}
+            <input type="hidden" name="trip-id" value="{{ trip.id }}"/>
+            <h3 class="card-header">
+                <input type="text" style="width: 100%" title="Destination" placeholder="Destination"
+                       name="destination"
+                        {% if trip.destination %}
+                       value="{{ trip.destination }}"
+                        {% endif %}
+                />
+            </h3>
+            <div class="card-block">
+                <p class="card-text">
+                    <input type="text" name="start_date" value="{{ trip.start_date }}"
+                           title="start date" class="edit-end-date datepicker" data-date-format="M. d, yyyy">
+                    -
+                    <input type="text" name="end-date" class="edit-end-date datepicker"
+                           value="{% if trip.end_date > trip.start_date %}{{ trip.end_date }}{% endif %}"
+                           title="end date" data-date-format="M. d, yyyy">
+                    {% if trip.start_date|days_left %}
+                        <span class="tag tag-default tag-pill">
                         {{ trip.start_date|days_left }}
                     </span>
-                {% endif %}
-                <a href="" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest">Remove</a>
-            </p>
-        </div>
-        <textarea class="trip-description" title="trip description" placeholder="Trip comments"></textarea>
+                    {% endif %}
+                    <a href="" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest">Remove</a>
+                    <input type="submit" class="btn btn-outline-info btn-sm pull-xs-right save-dest" value="Save"
+                    />
+                </p>
+            </div>
+            <textarea class="trip-description" title="trip description" placeholder="Trip comments" name="comment">{{ trip.comment.strip }}</textarea>
+        </form>
     </div>
 {% endfor %}

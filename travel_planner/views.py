@@ -1,6 +1,9 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
-from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
+from django.http import HttpResponseNotFound, HttpResponseForbidden
+from django.shortcuts import render, redirect
 from django.template.loader_tags import register
 
 from travel_planner.models import Trip
@@ -55,3 +58,26 @@ def home(request):
                 "current_day": date.today()
             }
         )
+
+
+def convert_date(date_string):
+    if date_string:
+        return datetime.strptime(date_string, "%b. %d, %Y")
+
+
+def save_trip(request):
+    trip_id = request.POST.get("trip-id")
+    trip = Trip.objects.get(id=trip_id)
+    if not trip:
+        return HttpResponseNotFound('<h1>Trip not found</h1>')
+    if trip.owner != request.user:
+        raise PermissionDenied
+    trip.destination = request.POST.get("destination")
+    trip.start_date = convert_date(request.POST.get("start_date"))
+    if not request.POST.get("end_date"):
+        trip.end_date = trip.start_date
+    else:
+        trip.end_date = convert_date(request.POST.get("end_date"))
+    trip.comment = request.POST.get("comment")
+    trip.save()
+    return redirect('home')
