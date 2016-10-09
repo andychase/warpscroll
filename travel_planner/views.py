@@ -2,7 +2,7 @@ from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.http import HttpResponseNotFound, HttpResponseForbidden
+from django.http import HttpResponseNotFound, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.template.loader_tags import register
 
@@ -72,6 +72,8 @@ def save_trip(request):
         return HttpResponseNotFound('<h1>Trip not found</h1>')
     if trip.owner != request.user:
         raise PermissionDenied
+    if request.POST.get("delete"):
+        return remove_trip(request, trip)
     trip.destination = request.POST.get("destination")
     trip.start_date = convert_date(request.POST.get("start_date"))
     if not request.POST.get("end_date"):
@@ -80,4 +82,20 @@ def save_trip(request):
         trip.end_date = convert_date(request.POST.get("end_date"))
     trip.comment = request.POST.get("comment")
     trip.save()
+    return redirect('home')
+
+
+def add_trip(request):
+    if request.user.is_anonymous:
+        return HttpResponseBadRequest('<h1>Must be logged in</h1>')
+    trip = Trip()
+    trip.owner = request.user
+    trip.start_date = datetime.now()
+    trip.end_date = datetime.now()
+    trip.save()
+    return redirect('home')
+
+
+def remove_trip(request, trip):
+    trip.delete()
     return redirect('home')

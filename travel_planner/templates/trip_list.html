@@ -2,7 +2,11 @@
     <h3>{{ title }}
         {% if upcoming %}
             <a href="" class="btn btn-outline-info btn-sm pull-xs-right print-plan">Print travel plan for next month</a>
-            <a href="" class="btn btn-outline-warning btn-sm pull-xs-right add-dest">Add destination</a>
+            <form action="{% url 'add_trip' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="submit" name="save" class="btn btn-outline-warning btn-sm pull-xs-right add-dest"
+                           value="Add destination" />
+            </form>
         {% endif %}
     </h3>
 
@@ -33,9 +37,10 @@
                         {{ trip.start_date|days_left }}
                     </span>
                     {% endif %}
-                    <a href="" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest">Remove</a>
-                    <input type="submit" class="btn btn-outline-info btn-sm pull-xs-right save-dest" value="Save"
-                    />
+                    <input type="submit" name="delete" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest"
+                           value="Remove" />
+                    <input type="submit" name="save" class="btn btn-outline-info btn-sm pull-xs-right save-dest"
+                           value="Save" />
                 </p>
             </div>
             <textarea class="trip-description" title="trip description" placeholder="Trip comments" name="comment">{{ trip.comment.strip }}</textarea>
