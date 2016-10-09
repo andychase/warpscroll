@@ -1,23 +1,60 @@
+// https://docs.djangoproject.com/en/1.10/ref/csrf/
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
 $(function () {
     $('.datepicker').datepicker();
+
 });
 
 var Trip = Backbone.Model.extend({
+     url: function() {
+        var origUrl = Backbone.Model.prototype.url.call(this);
+        return origUrl + (origUrl.charAt(origUrl.length - 1) == '/' ? '' : '/');
+    },
     defaults: function () {
+        var d = new Date();
+        var today = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
         return {
             destination: "",
-            start_date: "",
-            end_date: "",
+            start_date: today,
+            end_date: today,
+            days_left: "",
             comment: ""
         };
     }
 });
 
 var TripCollection = Backbone.Collection.extend({
-    url: '/api/user_trips',
+    url: '/api/user_trips/',
     model: Trip,
     comparator: function (m) {
-        return m.start_date
+        return new Date(m.get("start_date"))
     }
 });
 
