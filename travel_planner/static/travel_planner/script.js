@@ -187,6 +187,7 @@ function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
                 $loginForm.find("input[name=username]").val("");
                 $loginForm.find("input[name=password]").val("");
                 $loginForm.find("input[type=submit]").val("Login");
+                $loginForm.find(".login-error-message").hide();
             }
         ).fail(function (xhr, status, error) {
             $loginForm.find(".login-error-message").show();
@@ -196,7 +197,7 @@ function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
                 $loginForm.find(".login-error-message").html("Couldn't communicate with server.");
             else
                 $loginForm.find(".login-error-message").html(xhr.statusText);
-            $loginForm.find("input[type=submit]").val("Log in");
+            $loginForm.find("input[type=submit]").val("Login");
         });
 
     });
@@ -217,6 +218,54 @@ function prepareLogout($loginMenu, $userInfo, $tripList) {
     });
 }
 
+function prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList) {
+    $registerForm.submit(function (e) {
+        e.preventDefault();
+        var username = $registerForm.find("input[name=username]").val();
+        var password = $registerForm.find("input[name=password]").val();
+        var passwordConfirm = $registerForm.find("input[name=password-confirm]").val();
+        var errorBox = $registerForm.find('.register-error-message');
+        if (password != passwordConfirm) {
+            errorBox.show();
+            errorBox.html("Passwords do not match");
+            return;
+        }
+
+        $.post(
+            $registerForm.attr("action"),
+            {
+                username: username,
+                password: $registerForm.find("input[name=password]").val()
+            },
+            function (data) {
+                $loginMenu.hide();
+                $userInfo.show();
+                $("#username-field").html(username);
+                $tripList.show();
+                setupCSRFToken();
+                trips.fetch();
+                // Cleanup registration form in case user wants to log in again
+                errorBox.hide();
+                $registerForm.find("input[name=username]").val("");
+                $registerForm.find("input[name=password]").val("");
+                $registerForm.find("input[name=password-confirm]").val("");
+                $registerForm.find("input[type=submit]").val("Register");
+            }
+        ).fail(function (xhr, status, error) {
+            $registerForm.find("input[type=submit]").val("Register");
+            errorBox.show();
+            if (xhr.status == 0)
+                errorBox.html("Couldn't communicate with server.");
+            else if (xhr.status == 409)
+                errorBox.html("That username is already being used.");
+            else if (xhr.responseText)
+                errorBox.html(xhr.responseText);
+            else
+                errorBox.html(xhr.statusText);
+        });
+    });
+}
+
 $(function () {
     var app = new AppView();
     $(".add-dest").click(function (e) {
@@ -231,6 +280,7 @@ $(function () {
     var $tripList = $("#trip-list");
     prepareLogin($loginMenu, $loginForm, $userInfo, $tripList);
     prepareLogout($loginMenu, $userInfo, $tripList);
+    prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList);
 
     $registerForm.submit(function (e) {
         e.preventDefault();
