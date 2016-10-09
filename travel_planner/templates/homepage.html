@@ -20,10 +20,12 @@
         </div>
         <div class="row">
             <div class="{{ col_style }}">
-                {% include 'add_destination.html' %}
-                {% include "trip_list.html" with trips=current_trips title="Current Trips" %}
-                {% include "trip_list.html" with trips=upcoming_trips title="Upcoming Trips" upcoming=True %}
-                {% include "trip_list.html" with trips=past_trips title="Past Trips" %}
+                {% if not user.is_anonymous %}
+                    {% include 'add_destination.html' %}
+                    {% include "trip_list.html" with trips=current_trips title="Current Trips" %}
+                    {% include "trip_list.html" with trips=upcoming_trips title="Upcoming Trips" upcoming=True %}
+                    {% include "trip_list.html" with trips=past_trips title="Past Trips" %}
+                {% endif %}
             </div>
         </div>
         </div>
