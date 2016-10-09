@@ -33,9 +33,7 @@ def home(request):
     if request.user.is_anonymous:
         return render(
             request,
-            "homepage.html", {
-                "user": request.user,
-            }
+            "homepage.html"
         )
     else:
         return render(
