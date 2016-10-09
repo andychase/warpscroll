@@ -27,11 +27,6 @@ $.ajaxSetup({
     }
 });
 
-$(function () {
-    $('.datepicker').datepicker();
-
-});
-
 var Trip = Backbone.Model.extend({
     url: function () {
         var origUrl = Backbone.Model.prototype.url.call(this);
@@ -103,6 +98,7 @@ var AppView = Backbone.View.extend({
     addOne: function (trip) {
         var view = new TripView({model: trip});
         this.sortIntoStacks(trip, view);
+        $('.datepicker').datepicker();
     },
     addAll: function () {
         trips.each(this.addOne, this);
