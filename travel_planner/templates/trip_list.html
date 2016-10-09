@@ -22,7 +22,7 @@
             <div class="card-block">
                 <p class="card-text">
                     <input type="text" name="start_date" value="{{ trip.start_date }}"
-                           title="start date" class="edit-end-date datepicker" data-date-format="M. d, yyyy">
+                           title="start date" class="edit-start-date datepicker" data-date-format="M. d, yyyy">
                     -
                     <input type="text" name="end-date" class="edit-end-date datepicker"
                            value="{% if trip.end_date > trip.start_date %}{{ trip.end_date }}{% endif %}"
