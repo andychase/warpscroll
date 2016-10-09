@@ -20,8 +20,7 @@ def _days_left(start_date):
 
 class Trip(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    destination = models.CharField(max_length=200)
+    destination = models.CharField(blank=True, max_length=200)
     start_date = models.DateField()
     end_date = models.DateField()
     comment = models.TextField(blank=True)

@@ -26,6 +26,16 @@ $.ajaxSetup({
         }
     }
 });
+function get_date_only(date) {
+    var split_date = date.split("-");
+    var year = parseInt(split_date[0]);
+    var month = parseInt(split_date[1]);
+    var day = parseInt(split_date[2]);
+    return new Date(year, month - 1, day);
+}
+function dateToDateString(d) {
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+}
 
 var Trip = Backbone.Model.extend({
     url: function () {
@@ -33,8 +43,7 @@ var Trip = Backbone.Model.extend({
         return origUrl + (origUrl.charAt(origUrl.length - 1) == '/' ? '' : '/');
     },
     defaults: function () {
-        var d = new Date();
-        var today = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+        var today = dateToDateString(new Date());
         return {
             destination: "",
             start_date: today,
@@ -49,7 +58,7 @@ var TripCollection = Backbone.Collection.extend({
     url: '/api/user_trips/',
     model: Trip,
     comparator: function (m) {
-        return new Date(m.get("start_date"))
+        return get_date_only(m.get("start_date"));
     }
 });
 
@@ -62,49 +71,71 @@ var TripView = Backbone.View.extend({
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
     },
+    events: {
+        'click .remove-dest': function (e) {
+            this.model.destroy();
+            e.preventDefault();
+        },
+        'keypress input[name=destination]': function (e) {
+            if (e.keyCode == 13) e.target.blur();
+        },
+        'blur input[name=destination],textarea': 'edit',
+        'hide .datepicker': 'date_edit'
+    },
+    date_edit: function (e) {
+        this.edit(e);
+        trips.sort();
+    },
+    edit: function (e) {
+        var save_value = {};
+        save_value[e.target.name] = e.target.value;
+        this.model.save(save_value);
+    },
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
+        this.$el.find(".datepicker").datepicker();
         return this;
-    },
-    clear: function () {
-        this.model.destroy();
     }
 });
 
 var AppView = Backbone.View.extend({
     el: $("#trip-list"),
     initialize: function () {
-        this.$el.children(".trip-section").html("");
         this.current = this.$el.children(".current-trips");
         this.upcoming = this.$el.children(".upcoming-trips");
         this.past = this.$el.children(".past-trips");
 
         this.listenTo(trips, 'add', this.addOne);
         this.listenTo(trips, 'reset', this.addAll);
+        this.listenTo(trips, 'sort', this.addAll);
         this.listenTo(trips, 'all', this.render);
         trips.fetch();
     },
     sortIntoStacks: function (trip, view) {
-        var today = new Date();
-        var start_date = new Date(trip.get("start_date"));
-        var end_date = new Date(trip.get("end_date"));
+        var today = get_date_only(dateToDateString(new Date()));
+        var start_date = get_date_only(trip.get("start_date"));
+        var end_date = get_date_only(trip.get("end_date"));
         if (start_date <= today && end_date >= today)
             this.current.append(view.render().el);
-        else if (end_date < today)
+        else if (start_date <= end_date && end_date < today)
             this.past.append(view.render().el);
-        else if (start_date > today)
+        else
             this.upcoming.append(view.render().el);
     },
     addOne: function (trip) {
         var view = new TripView({model: trip});
         this.sortIntoStacks(trip, view);
-        $('.datepicker').datepicker();
     },
     addAll: function () {
+        this.$el.children(".trip-section").html("");
         trips.each(this.addOne, this);
     }
 });
 
 $(function () {
     var app = new AppView();
+    $(".add-dest").click(function (e) {
+        trips.create();
+        e.preventDefault();
+    });
 });

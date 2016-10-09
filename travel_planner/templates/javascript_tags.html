@@ -29,30 +29,26 @@
 {% endif %}
 <script type="text/template" id="trip-card-template">
     <div class="card trip-card">
-        <form method="post" action="/save-trip/">
-            <h3 class="card-header">
-                <input type="text" style="width: 100%" title="Destination" placeholder="Destination" name="destination"
-                       value="<%= destination %>">
-            </h3>
-            <div class="card-block">
-                <p class="card-text">
-                    <input type="text" name="start_date" value="<%= start_date %>" title="start date"
-                           class="edit-start-date datepicker" data-date-format="yyyy-m-d">
-                    -
-                    <input type="text" name="end-date" class="edit-end-date datepicker" value="<%= end_date %>"
-                           title="end date" data-date-format="yyyy-m-d">
+        <h3 class="card-header">
+            <input type="text" style="width: 100%" title="Destination" placeholder="Destination" name="destination"
+                   value="<%= destination %>">
+        </h3>
+        <div class="card-block">
+            <p class="card-text">
+                <input type="text" name="start_date" value="<%= start_date %>" title="start date"
+                       class="edit-start-date datepicker" data-date-format="yyyy-m-d">
+                -
+                <input type="text" name="end_date" class="edit-end-date datepicker" value="<%= end_date %>"
+                       title="end date" data-date-format="yyyy-m-d">
 
-                    <span class="tag tag-default tag-pill"><%= days_left %></span>
+                <span class="tag tag-default tag-pill"><%= days_left %></span>
 
-                    <input type="submit" name="delete" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest"
-                           value="Remove">
-                    <input type="submit" name="save" class="btn btn-outline-info btn-sm pull-xs-right save-dest"
-                           value="Save">
-                </p>
-            </div>
-            <textarea class="trip-description" title="trip description"
-                      placeholder="Trip comments" name="comment"><%= comment %></textarea>
-        </form>
+                <input type="submit" name="save" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest"
+                       value="Remove">
+            </p>
+        </div>
+        <textarea class="trip-description" title="trip description"
+                  placeholder="Trip comments" name="comment"><%= comment %></textarea>
     </div>
 </script>
 <script src="{% static 'travel_planner/script.js' %}"></script>
