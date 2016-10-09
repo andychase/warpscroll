@@ -68,10 +68,12 @@ var trips = new TripCollection();
 
 var TripView = Backbone.View.extend({
     tagName: "div",
+    showSave: false,
     template: _.template($('#trip-card-template').html()),
     initialize: function () {
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
+        this.listenTo(this.model, 'sync', this.showSaved);
     },
     events: {
         'click .remove-dest': function (e) {
@@ -82,7 +84,17 @@ var TripView = Backbone.View.extend({
             if (e.keyCode == 13) e.target.blur();
         },
         'blur input[name=destination],textarea': 'edit',
-        'hide .datepicker': 'date_edit'
+        'keydown input,textarea': 'show_save',
+        'click input.save-dest': function (e) {
+            e.preventDefault();
+        },
+        'hide .datepicker': 'date_edit',
+        'show .datepicker': 'show_save'
+    },
+    show_save: function (e) {
+        if (e.target.name != "save") {
+            this.$saveDest.fadeIn(100);
+        }
     },
     date_edit: function (e) {
         this.edit(e);
@@ -93,11 +105,23 @@ var TripView = Backbone.View.extend({
         save_value[e.target.name] = e.target.value;
         if ((e.target.name == "start_date" || e.target.name == "end_date") && !e.target.value.trim())
             save_value[e.target.name] = null;
-        this.model.save(save_value);
+        if (e.target.value != this.model.get(e.target.name))
+            this.model.save(save_value);
+        else
+            this.$saveDest.fadeOut(100);
+    },
+    showSaved: function () {
+        var $saveDest = this.$saveDest;
+        this.$saveDest.fadeIn(0);
+        $saveDest.val("Saved");
+        $saveDest.fadeOut(400, function () {
+            $saveDest.val("Save")
+        });
     },
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
         this.$el.find(".datepicker").datepicker();
+        this.$saveDest = this.$el.find(".save-dest");
         return this;
     }
 });
