@@ -27,6 +27,8 @@ $.ajaxSetup({
     }
 });
 function get_date_only(date) {
+    if (!date)
+        return null;
     var split_date = date.split("-");
     var year = parseInt(split_date[0]);
     var month = parseInt(split_date[1]);
@@ -89,6 +91,8 @@ var TripView = Backbone.View.extend({
     edit: function (e) {
         var save_value = {};
         save_value[e.target.name] = e.target.value;
+        if ((e.target.name == "start_date" || e.target.name == "end_date") && !e.target.value.trim())
+            save_value[e.target.name] = null;
         this.model.save(save_value);
     },
     render: function () {
@@ -115,7 +119,7 @@ var AppView = Backbone.View.extend({
         var today = get_date_only(dateToDateString(new Date()));
         var start_date = get_date_only(trip.get("start_date"));
         var end_date = get_date_only(trip.get("end_date"));
-        if (start_date <= today && end_date >= today)
+        if (!start_date || !end_date || (start_date <= today && end_date >= today))
             this.current.prepend(view.render().el);
         else if (start_date <= end_date && end_date < today)
             this.past.prepend(view.render().el);

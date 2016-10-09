@@ -6,6 +6,7 @@ from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
 from rest_framework import status
+from rest_framework.fields import DateField
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import views
 from rest_framework.response import Response
@@ -51,6 +52,9 @@ class UserTripPermission(permissions.BasePermission):
 
 
 class TripSerializer(serializers.HyperlinkedModelSerializer):
+    start_date = DateField(allow_null=True)
+    end_date = DateField(allow_null=True)
+
     class Meta:
         model = Trip
         fields = ('id', 'url', 'destination', 'start_date', 'end_date', 'days_left', 'comment')

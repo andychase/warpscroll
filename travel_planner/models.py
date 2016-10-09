@@ -6,6 +6,8 @@ from django.db import models
 
 
 def _days_left(start_date):
+    if not start_date:
+        return
     positive = start_date - date.today() > timedelta()
     if positive:
         relative_date = relativedelta(start_date, date.today())
@@ -21,8 +23,8 @@ def _days_left(start_date):
 class Trip(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     destination = models.CharField(blank=True, max_length=200)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
     comment = models.TextField(blank=True)
     view_only_token = models.UUIDField(default=uuid.uuid4)
 
