@@ -60,7 +60,7 @@ var TripCollection = Backbone.Collection.extend({
     url: '/api/user_trips/',
     model: Trip,
     comparator: function (m) {
-        return get_date_only(m.get("start_date"));
+        return -get_date_only(m.get("start_date"));
     }
 });
 
