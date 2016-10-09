@@ -1,11 +1,5 @@
-{% if title and trips %}
-    <h3>{{ title }}
-        {% if upcoming %}
-            <a href="" class="btn btn-outline-info btn-sm pull-xs-right print-plan">Print travel plan for next month</a>
-        {% endif %}
-    </h3>
-
-{% endif %}
+<h3>{{ title }}</h3>
+<div class="trip-section {{ class }}">
 {% for trip in trips %}
     <div class="card trip-card">
         <form method="post" action="{% url 'save_trip' %}">
@@ -33,12 +27,14 @@
                     </span>
                     {% endif %}
                     <input type="submit" name="delete" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest"
-                           value="Remove" />
+                           value="Remove"/>
                     <input type="submit" name="save" class="btn btn-outline-info btn-sm pull-xs-right save-dest"
-                           value="Save" />
+                           value="Save"/>
                 </p>
             </div>
-            <textarea class="trip-description" title="trip description" placeholder="Trip comments" name="comment">{{ trip.comment.strip }}</textarea>
+            <textarea class="trip-description" title="trip description" placeholder="Trip comments"
+                      name="comment">{{ trip.comment.strip }}</textarea>
         </form>
     </div>
 {% endfor %}
+</div>

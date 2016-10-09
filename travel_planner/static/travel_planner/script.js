@@ -20,7 +20,7 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 $.ajaxSetup({
-    beforeSend: function(xhr, settings) {
+    beforeSend: function (xhr, settings) {
         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
         }
@@ -33,7 +33,7 @@ $(function () {
 });
 
 var Trip = Backbone.Model.extend({
-     url: function() {
+    url: function () {
         var origUrl = Backbone.Model.prototype.url.call(this);
         return origUrl + (origUrl.charAt(origUrl.length - 1) == '/' ? '' : '/');
     },
@@ -79,15 +79,30 @@ var TripView = Backbone.View.extend({
 var AppView = Backbone.View.extend({
     el: $("#trip-list"),
     initialize: function () {
-        this.$el.html("");
+        this.$el.children(".trip-section").html("");
+        this.current = this.$el.children(".current-trips");
+        this.upcoming = this.$el.children(".upcoming-trips");
+        this.past = this.$el.children(".past-trips");
+
         this.listenTo(trips, 'add', this.addOne);
         this.listenTo(trips, 'reset', this.addAll);
         this.listenTo(trips, 'all', this.render);
         trips.fetch();
     },
+    sortIntoStacks: function (trip, view) {
+        var today = new Date();
+        var start_date = new Date(trip.get("start_date"));
+        var end_date = new Date(trip.get("end_date"));
+        if (start_date <= today && end_date >= today)
+            this.current.append(view.render().el);
+        else if (end_date < today)
+            this.past.append(view.render().el);
+        else if (start_date > today)
+            this.upcoming.append(view.render().el);
+    },
     addOne: function (trip) {
         var view = new TripView({model: trip});
-        this.$el.append(view.render().el);
+        this.sortIntoStacks(trip, view);
     },
     addAll: function () {
         trips.each(this.addOne, this);
