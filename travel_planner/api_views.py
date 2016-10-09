@@ -53,7 +53,7 @@ class UserTripPermission(permissions.BasePermission):
 class TripSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Trip
-        fields = ('url', 'destination', 'start_date', 'end_date', 'comment')
+        fields = ('url', 'destination', 'start_date', 'end_date', 'days_left', 'comment')
         owner = serializers.HyperlinkedRelatedField(
             view_name='user-detail',
             lookup_field='id',
