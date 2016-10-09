@@ -77,7 +77,10 @@ var TripView = Backbone.View.extend({
     },
     events: {
         'click .remove-dest': function (e) {
-            this.model.destroy();
+            var view = this;
+            this.$el.slideUp(150, function () {
+                view.model.destroy();
+            });
             e.preventDefault();
         },
         'keypress input[name=destination]': function (e) {
