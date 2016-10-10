@@ -49,6 +49,17 @@
     margin-bottom: 1rem;
 }
 
+.date-switched-messages {
+    display: none;
+}
+
+.switched-dates .date-switched-messages {
+    display: inline-block;
+    vertical-align: bottom;
+    background-color: rgba(255, 238, 0, 0.38);
+    font-size: 9pt;
+}
+
 .switched-dates input.edit-end-date {
     background-color: rgba(255, 238, 0, 0.38);
 }

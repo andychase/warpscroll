@@ -133,8 +133,11 @@ var TripView = Backbone.View.extend({
     colorSwitchedDatesYellow: function () {
         var start_date = get_date_only(this.model.get("start_date"));
         var end_date = get_date_only(this.model.get("end_date"));
-        if (end_date < start_date)
+        if (end_date < start_date) {
             this.$el.addClass("switched-dates");
+            this.$el.find(".date-switched-messages").html("End date is after beginning date");
+            this.$el.find(".days-left-tag").hide();
+        }
     },
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));

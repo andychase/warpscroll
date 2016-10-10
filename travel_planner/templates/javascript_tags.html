@@ -40,8 +40,9 @@
                 -
                 <input type="text" name="end_date" class="edit-end-date datepicker" value="<%= end_date %>"
                        title="end date" data-date-format="yyyy-m-dd">
+                <span class="date-switched-messages" role="alert"></span>
 
-                <span class="tag tag-default tag-pill"><%= days_left %></span>
+                <span class="tag tag-default tag-pill days-left-tag"><%= days_left %></span>
 
                 <input type="submit" name="save" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest"
                        value="Remove">
