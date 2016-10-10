@@ -77,6 +77,12 @@ var TripView = Backbone.View.extend({
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
         this.listenTo(this.model, 'sync', this.showSaved);
+        this.listenTo(this.model, 'hideThisItem', function () {
+            this.$el.hide();
+        });
+        this.listenTo(this.model, 'showThisItem', function () {
+            this.$el.show();
+        });
     },
     events: {
         'click .remove-dest': function (e) {
@@ -164,6 +170,70 @@ var AppView = Backbone.View.extend({
         trips.each(this.addOne, this);
     }
 });
+
+function showAll() {
+    trips.each(function (item) {
+        item.trigger("showThisItem")
+    });
+}
+
+function tripsShowElseHide(func) {
+    trips.each(function (trip) {
+        var start_date = get_date_only(trip.get("start_date"));
+        if (func(trip)) {
+            trip.trigger("showThisItem");
+        } else {
+            trip.trigger("hideThisItem");
+        }
+    });
+}
+
+function handleSelectFilter($this) {
+    var today = get_date_only(dateToDateString(new Date()));
+    var d = new Date();
+    if ($this.hasClass("show-all")) {
+        showAll();
+    } else if ($this.hasClass("next-month")) {
+        d.setMonth(d.getMonth() + 1);
+        var nextMonthDate = get_date_only(dateToDateString(d));
+        tripsShowElseHide(function (trip) {
+            var end_date = get_date_only(trip.get("end_date"));
+            return end_date > today && end_date < nextMonthDate;
+        });
+    } else if ($this.hasClass("next-year")) {
+        d.setFullYear(d.getFullYear() + 1);
+        var nextYearDate = get_date_only(dateToDateString(d));
+        tripsShowElseHide(function (trip) {
+            var end_date = get_date_only(trip.get("end_date"));
+            return end_date > today && end_date < nextYearDate;
+        });
+    } else if ($this.hasClass("past")) {
+        tripsShowElseHide(function (trip) {
+            var end_date = get_date_only(trip.get("end_date"));
+            return end_date < today;
+        });
+    }
+}
+
+function prepareSearch($filterBar) {
+    $filterBar.show();
+    $filterBar.find(".nav-link").click(function () {
+        $filterBar.find(".nav-item").removeClass("active");
+        var $this = $(this);
+        $this.parent().addClass("active");
+        handleSelectFilter($this)
+    });
+    var $searchBox = $filterBar.find(".search-destinations");
+    $filterBar.find(".search-destinations-button").click(function (e) {
+        e.preventDefault();
+    });
+    $searchBox.keyup(function () {
+        $filterBar.find(".nav-link.show-all").click();
+        tripsShowElseHide(function (item) {
+            return item.get("destination").toLowerCase().startsWith($searchBox.val().toLowerCase());
+        });
+    });
+}
 
 function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
     $loginForm.submit(function (e) {
@@ -283,6 +353,8 @@ $(function () {
     prepareLogin($loginMenu, $loginForm, $userInfo, $tripList);
     prepareLogout($loginMenu, $userInfo, $tripList);
     prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList);
+    var $filterBar = $('.filter-bar');
+    prepareSearch($filterBar);
 
     $registerForm.submit(function (e) {
         e.preventDefault();
