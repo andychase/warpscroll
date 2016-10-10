@@ -30,7 +30,7 @@
 }
 
 .logout-button {
-    vertical-align: inherit;
+    vertical-align: bottom;
 }
 
 .add-dest, .save-dest {
