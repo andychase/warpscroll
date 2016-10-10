@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+from dateutil.tz import tzoffset
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import PermissionDenied
@@ -17,24 +18,29 @@ def home(request):
             "homepage.html"
         )
     else:
+        if request.session.get("time_zone"):
+            time_zone = request.session.get("time_zone") * 60 * 60
+            today = datetime.now(tz=tzoffset("user", time_zone)).date()
+        else:
+            today = date.today()
         return render(
             request,
             "homepage.html", {
                 "user": request.user,
                 "current_trips": Trip.objects.filter(
                     owner=request.user,
-                    start_date__lte=date.today(),
-                    end_date__gte=date.today(),
+                    start_date__lte=today,
+                    end_date__gte=today
                 ).order_by("start_date", "-id"),
                 "upcoming_trips": Trip.objects.filter(
                     owner=request.user,
-                    start_date__gt=date.today()
+                    start_date__gt=today
                 ).order_by("start_date", "-id"),
                 "past_trips": Trip.objects.filter(
                     owner=request.user,
-                    end_date__lt=date.today(),
+                    end_date__lt=today
                 ).order_by("start_date", "-id"),
-                "current_day": date.today()
+                "current_day": today
             }
         )
 
@@ -81,6 +87,8 @@ def remove_trip(request, trip):
 
 
 def ajax_login(request):
+    if request.POST.get("time_zone"):
+        request.session['time_zone'] = int(request.POST.get("time_zone"))
     form = AuthenticationForm(request, data=request.POST)
     if form.is_valid():
         login(request, form.get_user())

@@ -28,6 +28,9 @@ class UserViewSet(viewsets.GenericViewSet):
 
     @staticmethod
     def create(request):
+        if request.POST.get("time_zone"):
+            request.session['time_zone'] = int(request.POST.get("time_zone"))
+
         if get_user_model().objects.filter(username=request.POST['username']).count():
             return Response({}, status=status.HTTP_409_CONFLICT)
         if request.POST.get('password-confirm') and request.POST['password'] != request.POST['password-confirm']:
@@ -54,6 +57,7 @@ class UserTripPermission(permissions.BasePermission):
 class TripSerializer(serializers.HyperlinkedModelSerializer):
     start_date = DateField(allow_null=True)
     end_date = DateField(allow_null=True)
+    days_left = serializers.SerializerMethodField()
 
     class Meta:
         model = Trip
@@ -64,6 +68,13 @@ class TripSerializer(serializers.HyperlinkedModelSerializer):
             many=True,
             read_only=True
         )
+
+    def get_days_left(self, obj):
+        if self.context['request'].session.get('time_zone'):
+            time_zone = self.context['request'].session.get('time_zone') * 60 * 60
+            return obj.days_left(time_zone)
+        else:
+            return obj.days_left()
 
 
 class UserTripsFilter(filters.FilterSet):

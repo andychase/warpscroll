@@ -1,16 +1,21 @@
 import uuid
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
+from dateutil.tz import tzoffset
 from django.contrib.auth.models import User
 from django.db import models
 
 
-def _days_left(start_date):
+def _days_left(start_date, timezone=None):
     if not start_date:
         return
-    positive = start_date - date.today() > timedelta()
+    if timezone:
+        today = datetime.now(tz=tzoffset("user", timezone)).date()
+    else:
+        today = date.today()
+    positive = start_date - today > timedelta()
     if positive:
-        relative_date = relativedelta(start_date, date.today())
+        relative_date = relativedelta(start_date, today)
         years, months, days = relative_date.years, relative_date.months, relative_date.days
         for caption, item in (("year", years), ("month", months), ("day", days)):
             if item:
@@ -31,6 +36,5 @@ class Trip(models.Model):
     def __str__(self):
         return self.destination
 
-    @property
-    def days_left(self):
-        return "".join(_days_left(self.start_date))
+    def days_left(self, timezone=None):
+        return "".join(_days_left(self.start_date, timezone))

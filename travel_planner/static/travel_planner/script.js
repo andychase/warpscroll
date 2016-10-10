@@ -174,7 +174,8 @@ function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
             $loginForm.find("#ajax_login").val(),
             {
                 username: username,
-                password: $loginForm.find("input[name=password]").val()
+                password: $loginForm.find("input[name=password]").val(),
+                time_zone: -(new Date().getTimezoneOffset() / 60)
             },
             function (data) {
                 $loginMenu.hide();
@@ -235,7 +236,8 @@ function prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList) {
             $registerForm.attr("action"),
             {
                 username: username,
-                password: $registerForm.find("input[name=password]").val()
+                password: $registerForm.find("input[name=password]").val(),
+                time_zone: -(Math.floor(new Date().getTimezoneOffset() / 60))
             },
             function (data) {
                 $loginMenu.hide();
