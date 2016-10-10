@@ -78,9 +78,11 @@ class TripSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserTripsFilter(filters.FilterSet):
-    min_price = django_filters.Filter(name="dest")
+    destination = django_filters.Filter(name="destination")
     min_start_date = django_filters.DateFilter(name="start_date", lookup_expr='gte')
     max_start_date = django_filters.DateFilter(name="start_date", lookup_expr='lte')
+    min_end_date = django_filters.DateFilter(name="end_date", lookup_expr='gte')
+    max_end_date = django_filters.DateFilter(name="end_date", lookup_expr='lte')
 
     class Meta:
         model = Trip
