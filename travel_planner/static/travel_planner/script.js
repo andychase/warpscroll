@@ -217,7 +217,8 @@ function handleSelectFilter($this) {
 
 function prepareSearch($filterBar) {
     $filterBar.show();
-    $filterBar.find(".nav-link").click(function () {
+    $filterBar.find(".nav-link").click(function (e) {
+        e.preventDefault();
         $filterBar.find(".nav-item").removeClass("active");
         var $this = $(this);
         $this.parent().addClass("active");
