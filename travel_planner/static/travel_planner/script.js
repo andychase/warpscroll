@@ -126,7 +126,7 @@ var TripView = Backbone.View.extend({
         var $saveDest = this.$saveDest;
         this.$saveDest.fadeIn(0);
         $saveDest.val("Saved");
-        $saveDest.fadeOut(400, function () {
+        $saveDest.delay(500).fadeOut(400, function () {
             $saveDest.val("Save")
         });
     },
