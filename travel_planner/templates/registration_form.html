@@ -41,11 +41,15 @@
         </form>
     </div>
 </div>
-
-<div style="{% if request.user.is_anonymous %}display: none;{% endif %}" id="user-info">
-    <span style="margin-right: 10px" id="username-field">{{ user.username }}</span>
-    {% if user.is_staff %}
-        <a class="btn btn-outline-secondary admin-button" href="{% url 'admin:index' %}">Admin</a>
-    {% endif %}
-    <a class="btn btn-outline-secondary logout-button" href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
+<div class="row">
+    <div class="col-md-6">
+        <div style="{% if request.user.is_anonymous %}display: none;{% endif %}" id="user-info">
+            <span style="margin-right: 10px" id="username-field">{{ user.username }}</span>
+            {% if user.is_staff %}
+                <a class="btn btn-outline-secondary admin-button" href="{% url 'admin:index' %}">Admin</a>
+            {% endif %}
+            <a class="btn btn-outline-secondary logout-button"
+               href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
+        </div>
+    </div>
 </div>
