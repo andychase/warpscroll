@@ -198,14 +198,14 @@ function handleSelectFilter($this) {
         var nextMonthDate = get_date_only(dateToDateString(d));
         tripsShowElseHide(function (trip) {
             var end_date = get_date_only(trip.get("end_date"));
-            return end_date > today && end_date < nextMonthDate;
+            return end_date >= today && end_date <= nextMonthDate;
         });
     } else if ($this.hasClass("next-year")) {
         d.setFullYear(d.getFullYear() + 1);
         var nextYearDate = get_date_only(dateToDateString(d));
         tripsShowElseHide(function (trip) {
             var end_date = get_date_only(trip.get("end_date"));
-            return end_date > today && end_date < nextYearDate;
+            return end_date >= today && end_date <= nextYearDate;
         });
     } else if ($this.hasClass("past")) {
         tripsShowElseHide(function (trip) {
