@@ -130,10 +130,17 @@ var TripView = Backbone.View.extend({
             $saveDest.val("Save")
         });
     },
+    colorSwitchedDatesYellow: function () {
+        var start_date = get_date_only(this.model.get("start_date"));
+        var end_date = get_date_only(this.model.get("end_date"));
+        if (end_date < start_date)
+            this.$el.addClass("switched-dates");
+    },
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
         this.$el.find(".datepicker").datepicker();
         this.$saveDest = this.$el.find(".save-dest");
+        this.colorSwitchedDatesYellow();
         return this;
     }
 });

@@ -49,6 +49,10 @@
     margin-bottom: 1rem;
 }
 
+.switched-dates input.edit-end-date {
+    background-color: rgba(255, 238, 0, 0.38);
+}
+
 @media print {
     .filter-bar, .add-dest, .save-dest, .remove-dest, #login-menu, .logout-button, .admin-button, .mini-action-bar {
         display: none !important;
