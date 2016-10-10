@@ -9,7 +9,7 @@ capture a niche market.
 
 You'll need python-3.5.2 and pip.
 
-First install the dependancies:
+First install the dependencies:
 
     pip3 install -r requirements.txt
 
