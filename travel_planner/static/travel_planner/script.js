@@ -235,6 +235,14 @@ function prepareSearch($filterBar) {
     });
 }
 
+function preparePrintButton($filterBar, $printPlan) {
+    $printPlan.click(function (e) {
+        e.preventDefault();
+        $filterBar.find(".nav-link.next-month").click();
+        window.print();
+    })
+}
+
 function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
     $loginForm.submit(function (e) {
         e.preventDefault();
@@ -355,6 +363,8 @@ $(function () {
     prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList);
     var $filterBar = $('.filter-bar');
     prepareSearch($filterBar);
+    var $printPlan = $(".print-plan");
+    preparePrintButton($filterBar, $printPlan);
 
     $registerForm.submit(function (e) {
         e.preventDefault();

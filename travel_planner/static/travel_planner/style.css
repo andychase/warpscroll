@@ -46,3 +46,12 @@
     display: none;
     margin-bottom: 1rem;
 }
+
+@media print {
+    .filter-bar, .add-dest, .save-dest, .remove-dest, #login-menu, .logout-button, .admin-button, .mini-action-bar {
+        display: none !important;
+    }
+    .trip-card {
+        page-break-inside: avoid;
+    }
+}

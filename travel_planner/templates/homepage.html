@@ -22,7 +22,7 @@
             <div class="{{ col_style }}">
                 <div id="trip-list" style="{% if user.is_anonymous %}display: none;{% endif %}">
                     {% include 'filter-bar.html' %}
-                    <div style="float: right;">
+                    <div style="float: right;" class="mini-action-bar">
                         {% include 'add_destination.html' %}
                         <a href="" class="btn btn-outline-info btn-sm print-plan">Print travel plan for
                             next
