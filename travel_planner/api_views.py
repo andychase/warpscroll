@@ -1,6 +1,8 @@
 import django_filters
 from django.contrib.auth import get_user_model
+from django.contrib.auth import views
 from django.contrib.auth.models import User
+from django.http import Http404
 from rest_framework import exceptions
 from rest_framework import filters
 from rest_framework import permissions
@@ -8,7 +10,6 @@ from rest_framework import routers, serializers, viewsets
 from rest_framework import status
 from rest_framework.fields import DateField
 from rest_framework.permissions import AllowAny
-from django.contrib.auth import views
 from rest_framework.response import Response
 
 from travel_planner.models import Trip
@@ -102,6 +103,12 @@ class UserTripsViewSet(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied("Not logged in.")
         else:
             return Trip.objects.filter(owner=self.request.user).order_by("-start_date")
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(self, request, *args, **kwargs)
+        except Http404:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
