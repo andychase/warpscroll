@@ -9,7 +9,7 @@ from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
 from rest_framework import status
 from rest_framework.fields import DateField
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, IsAdminUser
 from rest_framework.response import Response
 
 from travel_planner.models import Trip
@@ -30,10 +30,18 @@ class UserViewPermission(BasePermission):
         return request.method == "POST" or (request.user and request.user.is_staff)
 
 
+class IsSuperUser(BasePermission):
+    """
+    Allows access only to admin users.
+    """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_admin
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = []
     permission_classes = (UserViewPermission,)
 
     def create(self, request, *args, **kwargs):
@@ -61,7 +69,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserTripPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return request.user == obj.owner
+        return request.user == obj.owner or request.user.is_admin
 
 
 class TripSerializer(serializers.HyperlinkedModelSerializer):
@@ -85,6 +93,11 @@ class TripSerializer(serializers.HyperlinkedModelSerializer):
             return obj.days_left(time_zone)
         else:
             return obj.days_left()
+
+
+class AllTripSerializer(TripSerializer):
+    class Meta(TripSerializer.Meta):
+        fields = ('id', 'url', 'owner', 'destination', 'start_date', 'end_date', 'days_left', 'comment')
 
 
 class UserTripsFilter(filters.FilterSet):
@@ -123,6 +136,19 @@ class UserTripsViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
+class AllUserTripsViewSet(UserTripsViewSet):
+    """ Returns a list of the all upcoming trips ordered by start_date.
+    """
+    serializer_class = AllTripSerializer
+    permission_classes = (IsSuperUser,)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = UserTripsFilter
+
+    def get_queryset(self):
+        return Trip.objects.all()
+
+
 router = routers.DefaultRouter()
 router.register(r'user_trips', UserTripsViewSet, "trip")
 router.register(r'user', UserViewSet, "user")
+router.register(r'all_user_trips', AllUserTripsViewSet, "all_user_trips")
