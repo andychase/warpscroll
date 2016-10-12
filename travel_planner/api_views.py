@@ -9,7 +9,7 @@ from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
 from rest_framework import status
 from rest_framework.fields import DateField
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from travel_planner.models import Trip
@@ -21,17 +21,27 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'password', 'email')
 
 
-class UserViewSet(viewsets.GenericViewSet):
-    queryset = User.objects.none()
+class UserViewPermission(BasePermission):
+    """
+    Allows access only to admin users.
+    """
+
+    def has_permission(self, request, view):
+        return request.method == "POST" or (request.user and request.user.is_staff)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = []
-    permission_classes = (AllowAny,)
+    permission_classes = (UserViewPermission,)
 
-    @staticmethod
-    def create(request):
+    def create(self, request, *args, **kwargs):
         if request.POST.get("time_zone"):
             request.session['time_zone'] = int(request.POST.get("time_zone"))
 
+        if 'username' not in request.POST or 'password' not in request.POST:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
         if get_user_model().objects.filter(username=request.POST['username']).count():
             return Response({}, status=status.HTTP_409_CONFLICT)
         if request.POST.get('password-confirm') and request.POST['password'] != request.POST['password-confirm']:
@@ -45,8 +55,7 @@ class UserViewSet(viewsets.GenericViewSet):
             return views.login(request._request)
         return Response({"username": user.username}, status=status.HTTP_201_CREATED)
 
-    @staticmethod
-    def perform_create(serializer):
+    def perform_create(self, serializer):
         serializer.save()
 
 
