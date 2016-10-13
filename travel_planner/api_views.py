@@ -125,7 +125,7 @@ class AllTripSerializer(TripSerializer):
 
 
 class UserTripsFilter(filters.FilterSet):
-    destination = django_filters.Filter(name="destination")
+    destination = django_filters.Filter(name="destination", lookup_expr='contains')
     min_start_date = django_filters.DateFilter(name="start_date", lookup_expr='gte')
     max_start_date = django_filters.DateFilter(name="start_date", lookup_expr='lte')
     min_end_date = django_filters.DateFilter(name="end_date", lookup_expr='gte')

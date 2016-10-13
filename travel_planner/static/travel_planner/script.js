@@ -198,29 +198,44 @@ function tripsShowElseHide(func) {
     });
 }
 
-function handleSelectFilter($this) {
+function handleSelectFilter($this, $searchBox) {
     var today = get_date_only(dateToDateString(new Date()));
     var d = new Date();
     if ($this.hasClass("show-all")) {
+        $searchBox.val("");
         showAll();
+        trips.fetch({
+            reset: true
+        });
     } else if ($this.hasClass("next-month")) {
         d.setMonth(d.getMonth() + 1);
-        var nextMonthDate = get_date_only(dateToDateString(d));
-        tripsShowElseHide(function (trip) {
-            var end_date = get_date_only(trip.get("end_date"));
-            return end_date >= today && end_date <= nextMonthDate;
+        var nextMonthDate = dateToDateString(d);
+        trips.fetch({
+            reset: true,
+            data: {
+                min_end_date: dateToDateString(today),
+                max_end_date: nextMonthDate,
+                destination: $searchBox.val()
+            }
         });
     } else if ($this.hasClass("next-year")) {
         d.setFullYear(d.getFullYear() + 1);
-        var nextYearDate = get_date_only(dateToDateString(d));
-        tripsShowElseHide(function (trip) {
-            var end_date = get_date_only(trip.get("end_date"));
-            return end_date >= today && end_date <= nextYearDate;
+        var nextYearDate = dateToDateString(d);
+        trips.fetch({
+            reset: true,
+            data: {
+                min_end_date: dateToDateString(today),
+                max_end_date: nextYearDate,
+                destination: $searchBox.val()
+            }
         });
     } else if ($this.hasClass("past")) {
-        tripsShowElseHide(function (trip) {
-            var end_date = get_date_only(trip.get("end_date"));
-            return end_date < today;
+        trips.fetch({
+            reset: true,
+            data: {
+                max_end_date: dateToDateString(today),
+                destination: $searchBox.val()
+            }
         });
     }
 }
@@ -232,18 +247,22 @@ function prepareSearch($filterBar) {
         $filterBar.find(".nav-item").removeClass("active");
         var $this = $(this);
         $this.parent().addClass("active");
-        handleSelectFilter($this)
+        handleSelectFilter($this, $searchBox)
     });
     var $searchBox = $filterBar.find(".search-destinations");
     $filterBar.find(".search-destinations-button").click(function (e) {
         e.preventDefault();
     });
-    $searchBox.keyup(function () {
-        $filterBar.find(".nav-link.show-all").click();
-        tripsShowElseHide(function (item) {
-            return item.get("destination").toLowerCase().startsWith($searchBox.val().toLowerCase());
+    $searchBox.keyup(_.throttle(function () {
+        $filterBar.find(".nav-item").removeClass("active");
+        $filterBar.find(".nav-link.show-all").parent().addClass("active");
+        trips.fetch({
+            reset: true,
+            data: {
+                destination: $searchBox.val()
+            }
         });
-    });
+    }, 300));
 }
 
 function preparePrintButton($filterBar, $printPlan) {
@@ -444,6 +463,8 @@ $(function () {
 
     if ($loginMenu.is(':visible')) {
     } else {
-        trips.fetch();
+        trips.fetch({
+            reset: true
+        });
     }
 });
