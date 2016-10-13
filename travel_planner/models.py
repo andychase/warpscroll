@@ -37,4 +37,7 @@ class Trip(models.Model):
         return self.destination
 
     def days_left(self, timezone=None):
-        return "".join(_days_left(self.start_date, timezone))
+        days_left_value = "".join(_days_left(self.start_date, timezone))
+        if days_left_value:
+            days_left_value += " until trip"
+        return days_left_value
