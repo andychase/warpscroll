@@ -198,45 +198,54 @@ function tripsShowElseHide(func) {
     });
 }
 
+var filterOptions = {};
+var limit = 20;
+var offset = 0;
+function fetchTrips() {
+    filterOptions.limit = limit;
+    filterOptions.offset = offset;
+    trips.fetch({
+        reset: true,
+        data: filterOptions
+    });
+}
+
 function handleSelectFilter($this, $searchBox) {
     var today = get_date_only(dateToDateString(new Date()));
     var d = new Date();
     if ($this.hasClass("show-all")) {
         $searchBox.val("");
         showAll();
-        trips.fetch({
-            reset: true
-        });
+        filterOptions = {};
+        offset = 0;
+        fetchTrips();
     } else if ($this.hasClass("next-month")) {
         d.setMonth(d.getMonth() + 1);
         var nextMonthDate = dateToDateString(d);
-        trips.fetch({
-            reset: true,
-            data: {
-                min_end_date: dateToDateString(today),
-                max_end_date: nextMonthDate,
-                destination: $searchBox.val()
-            }
-        });
+        offset = 0;
+        filterOptions = {
+            min_end_date: dateToDateString(today),
+            max_end_date: nextMonthDate,
+            destination: $searchBox.val()
+        };
+        fetchTrips();
     } else if ($this.hasClass("next-year")) {
         d.setFullYear(d.getFullYear() + 1);
         var nextYearDate = dateToDateString(d);
-        trips.fetch({
-            reset: true,
-            data: {
-                min_end_date: dateToDateString(today),
-                max_end_date: nextYearDate,
-                destination: $searchBox.val()
-            }
-        });
+        offset = 0;
+        filterOptions = {
+            min_end_date: dateToDateString(today),
+            max_end_date: nextYearDate,
+            destination: $searchBox.val()
+        };
+        fetchTrips();
     } else if ($this.hasClass("past")) {
-        trips.fetch({
-            reset: true,
-            data: {
-                max_end_date: dateToDateString(today),
-                destination: $searchBox.val()
-            }
-        });
+        offset = 0;
+        filterOptions = {
+            max_end_date: dateToDateString(today),
+            destination: $searchBox.val()
+        };
+        fetchTrips();
     }
 }
 
@@ -256,12 +265,11 @@ function prepareSearch($filterBar) {
     $searchBox.keyup(_.throttle(function () {
         $filterBar.find(".nav-item").removeClass("active");
         $filterBar.find(".nav-link.show-all").parent().addClass("active");
-        trips.fetch({
-            reset: true,
-            data: {
-                destination: $searchBox.val()
-            }
-        });
+        offset = 0;
+        filterOptions = {
+            destination: $searchBox.val()
+        };
+        fetchTrips();
     }, 300));
 }
 
@@ -291,7 +299,7 @@ function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
                 $("#username-field").html(username);
                 $tripList.show();
                 setupCSRFToken();
-                trips.fetch();
+                fetchTrips();
                 // Cleanup login form in case user wants to log in again
                 $loginForm.find("input[name=username]").val("");
                 $loginForm.find("input[name=password]").val("");
@@ -353,7 +361,7 @@ function prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList) {
                 $("#username-field").html(username);
                 $tripList.show();
                 setupCSRFToken();
-                trips.fetch();
+                fetchTrips();
                 // Cleanup registration form in case user wants to log in again
                 errorBox.hide();
                 $registerForm.find("input[name=username]").val("");
@@ -436,6 +444,37 @@ function prepareChangePassword() {
     });
 }
 
+function preparePageHandles() {
+    var $nextPrevPage = $("#next-prev-page");
+    var $nextPage = $nextPrevPage.children('.next-page');
+    var $prevPage = $nextPrevPage.children('.prev-page');
+    $prevPage.click(function (e) {
+        e.preventDefault();
+        offset -= limit;
+        $prevPage.css("visibility", "hidden");
+        fetchTrips();
+    });
+    $nextPage.click(function (e) {
+        e.preventDefault();
+        offset += limit;
+        $nextPage.css("visibility", "hidden");
+        fetchTrips();
+    });
+
+    trips.on("sync", function (collection, response, options) {
+        if (options.xhr.getResponseHeader("previous") != "None") {
+            $prevPage.css("visibility", "visible");
+        } else {
+            $prevPage.css("visibility", "hidden");
+        }
+        if (options.xhr.getResponseHeader("next") != "None") {
+            $nextPage.css("visibility", "visible");
+        } else {
+            $nextPage.css("visibility", "hidden");
+        }
+    });
+}
+
 $(function () {
     var app = new AppView();
     $(".add-dest").click(function (e) {
@@ -456,6 +495,7 @@ $(function () {
     var $printPlan = $(".print-plan");
     preparePrintButton($filterBar, $printPlan);
     prepareChangePassword();
+    preparePageHandles();
 
     $registerForm.submit(function (e) {
         e.preventDefault();
@@ -463,8 +503,6 @@ $(function () {
 
     if ($loginMenu.is(':visible')) {
     } else {
-        trips.fetch({
-            reset: true
-        });
+        fetchTrips();
     }
 });
