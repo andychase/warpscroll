@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import Http404
 from rest_framework import exceptions
 from rest_framework import filters
+from rest_framework import pagination
 from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
 from rest_framework import status
@@ -13,6 +14,19 @@ from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from travel_planner.models import Trip
+
+
+class LimitHeaderPagination(pagination.LimitOffsetPagination):
+    default_limit = None
+
+    def get_paginated_response(self, data):
+        headers = dict([
+            ('count', self.count),
+            ('next', self.get_next_link()),
+            ('previous', self.get_previous_link())
+        ])
+
+        return Response(data, headers=headers)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,6 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (UserViewPermission,)
+    pagination_class = LimitHeaderPagination
 
     def create(self, request, *args, **kwargs):
         if request.POST.get("time_zone"):
@@ -128,6 +143,7 @@ class UserTripsViewSet(viewsets.ModelViewSet):
     permission_classes = (UserTripPermission,)
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = UserTripsFilter
+    pagination_class = LimitHeaderPagination
 
     def get_queryset(self):
         if self.request.user.is_anonymous:
