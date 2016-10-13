@@ -9,7 +9,7 @@ from rest_framework import permissions
 from rest_framework import routers, serializers, viewsets
 from rest_framework import status
 from rest_framework.fields import DateField
-from rest_framework.permissions import BasePermission, IsAdminUser
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from travel_planner.models import Trip
@@ -18,7 +18,7 @@ from travel_planner.models import Trip
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'password', 'email')
+        fields = ('id', 'url', 'username', 'email')
 
 
 class UserViewPermission(BasePermission):
@@ -65,6 +65,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(self, request, *args, **kwargs)
+        except Http404:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserTripPermission(permissions.BasePermission):
