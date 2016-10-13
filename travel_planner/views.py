@@ -95,3 +95,20 @@ def ajax_login(request):
         return JsonResponse({"OK": True})
     else:
         return HttpResponseBadRequest("Incorrect username or password")
+
+
+def ajax_change_password(request):
+    old_password = request.POST.get("old_password")
+    new_password = request.POST.get("new_password")
+    confirm_password = request.POST.get("confirm_password")
+    if not request.user.check_password(old_password):
+        return HttpResponseBadRequest('Original password not correct')
+    elif not new_password:
+        return HttpResponseBadRequest('New password must not be blank')
+    elif new_password != confirm_password:
+        return HttpResponseBadRequest("New password doesn't match")
+    else:
+        request.user.set_password(new_password)
+        request.user.save()
+        login(request, request.user)
+        return JsonResponse({"OK": True})

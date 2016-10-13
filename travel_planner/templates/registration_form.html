@@ -42,14 +42,42 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div style="{% if request.user.is_anonymous %}display: none;{% endif %}" id="user-info">
             <span style="margin-right: 10px" id="username-field">{{ user.username }}</span>
             {% if user.is_staff %}
                 <a class="btn btn-outline-secondary admin-button" href="{% url 'admin:index' %}">Admin</a>
             {% endif %}
+            <a class="btn btn-outline-secondary change-password-button"
+               href="?next=/">Change Password</a>
             <a class="btn btn-outline-secondary logout-button"
                href="{% url 'rest_framework:logout' %}?next=/">Logout</a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div style="display: none;" id="change-user-password">
+            <h5 class="register">Change password</h5>
+            <form method="post" action="{% url 'change_user_password' %}?next=/" id="change-user-password-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Old Password:
+                        <input class="form-control" type="password" name="old-password" required>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>New Password:
+                        <input class="form-control" type="password" name="password" required>
+                    </label>
+                    <label>
+                        <input class="form-control" type="password" name="password-confirm"
+                               placeholder="Confirm password" required>
+                    </label>
+                </div>
+                <div class="alert alert-danger register-error-message" role="alert" style="display: none;"></div>
+                <input class="btn btn-outline-primary" type="submit" value="Change password"/>
+            </form>
         </div>
     </div>
 </div>

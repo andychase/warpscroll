@@ -357,6 +357,66 @@ function prepareRegistration($loginMenu, $registerForm, $userInfo, $tripList) {
     });
 }
 
+function prepareChangePassword() {
+    var isShowing = false;
+    var $changePasswordButton = $(".change-password-button");
+    var $changeUserPasswordDialog = $("#change-user-password");
+    var $changeUserPasswordForm = $("#change-user-password-form");
+    $changePasswordButton.click(function (e) {
+        e.preventDefault();
+        if (!isShowing) {
+            isShowing = true;
+            $changeUserPasswordDialog.show();
+            $changePasswordButton.html("Hide Password Change");
+        } else {
+            isShowing = false;
+            $changeUserPasswordDialog.hide();
+            $changePasswordButton.html("Change Password");
+        }
+    });
+    $changeUserPasswordForm.submit(function (e) {
+        e.preventDefault();
+        var oldPassword = $changeUserPasswordForm.find("input[name=old-password]").val();
+        var password = $changeUserPasswordForm.find("input[name=password]").val();
+        var passwordConfirm = $changeUserPasswordForm.find("input[name=password-confirm]").val();
+        var errorBox = $changeUserPasswordForm.find('.register-error-message');
+        if (password != passwordConfirm) {
+            errorBox.show();
+            errorBox.html("Passwords do not match");
+            return;
+        }
+        $.post(
+            $changeUserPasswordForm.attr("action"),
+            {
+                old_password: oldPassword,
+                new_password: password,
+                confirm_password: passwordConfirm
+            },
+            function () {
+                $changeUserPasswordForm.find("input[name=old-password]").val("");
+                $changeUserPasswordForm.find("input[name=password]").val("");
+                $changeUserPasswordForm.find("input[name=password-confirm]").val("");
+                errorBox.hide();
+                isShowing = false;
+                $changeUserPasswordDialog.hide();
+                $changePasswordButton.html("Password change success!");
+                $changePasswordButton.addClass("btn-outline-success");
+                setupCSRFToken();
+                window.setTimeout(function () {
+                    $changePasswordButton.html("Change Password");
+                    $changePasswordButton.removeClass("btn-outline-success");
+                }, 2000)
+            }
+        ).fail(function (xhr) {
+            errorBox.show();
+            if (xhr.responseText)
+                errorBox.html(xhr.responseText);
+            else
+                errorBox.html(xhr.statusText);
+        });
+    });
+}
+
 $(function () {
     var app = new AppView();
     $(".add-dest").click(function (e) {
@@ -376,6 +436,7 @@ $(function () {
     prepareSearch($filterBar);
     var $printPlan = $(".print-plan");
     preparePrintButton($filterBar, $printPlan);
+    prepareChangePassword();
 
     $registerForm.submit(function (e) {
         e.preventDefault();

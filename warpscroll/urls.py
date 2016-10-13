@@ -18,7 +18,7 @@ from django.contrib import admin
 from rest_framework.authtoken.views import obtain_auth_token
 
 from travel_planner import api_views
-from travel_planner.views import home, save_trip, add_trip, remove_trip, ajax_login
+from travel_planner.views import home, save_trip, add_trip, remove_trip, ajax_login, ajax_change_password
 
 urlpatterns = [
     url(r'^$', home, name='home'),
@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^add-trip/$', add_trip, name='add_trip'),
     url(r'^remove-trip/$', remove_trip, name='remove_trip'),
     url(r'^login/$', ajax_login, name='login'),
+    url(r'^change_password/$', ajax_change_password, name='change_user_password'),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(api_views.router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
