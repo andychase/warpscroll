@@ -22,19 +22,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserViewPermission(BasePermission):
-    """
-    Allows access only to admin users.
-    """
-
     def has_permission(self, request, view):
-        return request.method == "POST" or (request.user and request.user.is_staff)
+        return request.method in {"POST", "PUT", "PATCH"} or (request.user and request.user.is_staff)
+
+    def has_object_permission(self, request, view, obj):
+        if obj.is_staff or obj.is_superuser:
+            return request.user.is_superuser
+        else:
+            return request.user == obj or (request.user.is_staff or request.user.is_superuser)
 
 
 class IsSuperUser(BasePermission):
-    """
-    Allows access only to admin users.
-    """
-
     def has_permission(self, request, view):
         return request.user and request.user.is_superuser
 
