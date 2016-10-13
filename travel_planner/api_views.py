@@ -98,6 +98,11 @@ class TripSerializer(serializers.HyperlinkedModelSerializer):
         else:
             return obj.days_left()
 
+    def validate(self, attrs):
+        if attrs['end_date'] < attrs['start_date']:
+            attrs['end_date'] = None
+        return attrs
+
 
 class AllTripSerializer(TripSerializer):
     class Meta(TripSerializer.Meta):
