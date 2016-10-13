@@ -36,7 +36,7 @@ class IsSuperUser(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return request.user and request.user.is_admin
+        return request.user and request.user.is_superuser
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -69,7 +69,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserTripPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return request.user == obj.owner or request.user.is_admin
+        return request.user == obj.owner or request.user.is_superuser
 
 
 class TripSerializer(serializers.HyperlinkedModelSerializer):
