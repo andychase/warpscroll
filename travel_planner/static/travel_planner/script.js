@@ -298,6 +298,7 @@ function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
                 $userInfo.show();
                 $("#username-field").html(username);
                 $tripList.show();
+                $("#next-prev-page").show();
                 setupCSRFToken();
                 fetchTrips();
                 // Cleanup login form in case user wants to log in again
@@ -330,6 +331,7 @@ function prepareLogout($loginMenu, $userInfo, $tripList) {
             $userInfo.hide();
             $("#username-field").html("");
             $tripList.hide();
+            $("#next-prev-page").hide();
             setupCSRFToken();
         });
     });
