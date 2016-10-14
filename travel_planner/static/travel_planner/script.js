@@ -464,6 +464,8 @@ function preparePageHandles() {
     });
 
     trips.on("sync", function (collection, response, options) {
+        if (!options.xhr.getResponseHeader("previous"))
+            return;
         if (options.xhr.getResponseHeader("previous") != "None") {
             $prevPage.css("visibility", "visible");
         } else {
