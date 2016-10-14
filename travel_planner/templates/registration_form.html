@@ -45,9 +45,8 @@
     <div class="col-md-12">
         <div style="{% if request.user.is_anonymous %}display: none;{% endif %}" id="user-info">
             <span style="margin-right: 10px" id="username-field">{{ user.username }}</span>
-            {% if user.is_staff %}
-                <a class="btn btn-outline-secondary admin-button" href="{% url 'admin:index' %}">Admin</a>
-            {% endif %}
+            <a class="btn btn-outline-secondary admin-button" style="display: none"
+               href="{% url 'admin:index' %}">Admin</a>
             <a class="btn btn-outline-secondary change-password-button"
                href="?next=/">Change Password</a>
             <a class="btn btn-outline-secondary logout-button"

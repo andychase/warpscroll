@@ -477,6 +477,10 @@ function preparePageHandles() {
     });
 }
 
+function prepareAdminSite($adminButton) {
+
+}
+
 $(function () {
     var app = new AppView();
     $(".add-dest").click(function (e) {
@@ -498,6 +502,8 @@ $(function () {
     preparePrintButton($filterBar, $printPlan);
     prepareChangePassword();
     preparePageHandles();
+    var $adminButton = $(".admin-button");
+    prepareAdminSite($adminButton);
 
     $registerForm.submit(function (e) {
         e.preventDefault();
