@@ -20,6 +20,12 @@
                 </div>
             </div>
             <div class="row">
+                <div id="admin-area" style="display: none;">
+                    <div id="admin-user-area"></div>
+                    <div id="admin-trips-area"></div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="{{ col_style }}">
                     <div id="trip-list" style="{% if user.is_anonymous %}display: none;{% endif %}">
                         {% include 'filter-bar.html' %}

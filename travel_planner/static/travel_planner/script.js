@@ -306,6 +306,14 @@ function prepareLogin($loginMenu, $loginForm, $userInfo, $tripList) {
                 $loginForm.find("input[name=password]").val("");
                 $loginForm.find("input[type=submit]").val("Login");
                 $loginForm.find(".login-error-message").hide();
+                // Activate admin if admin
+                if (data.admin) {
+                    prepareAdminSite();
+                } else {
+                    $("#admin-area").hide();
+                    $("#admin-user-area").html("");
+                    $("#admin-trips-area").html("");
+                }
             }
         ).fail(function (xhr, status, error) {
             $loginForm.find(".login-error-message").show();
@@ -332,6 +340,7 @@ function prepareLogout($loginMenu, $userInfo, $tripList) {
             $("#username-field").html("");
             $tripList.hide();
             $("#next-prev-page").hide();
+            $("#admin-area").hide();
             setupCSRFToken();
         });
     });
@@ -479,8 +488,95 @@ function preparePageHandles() {
     });
 }
 
-function prepareAdminSite($adminButton) {
+function reloadAdminArea() {
+    var adminUserTemplate = _.template($("#admin-users-template").html());
+    var adminTripsTemplate = _.template($("#admin-trips-template").html());
 
+    $.get("/api/user/", {}, function (data) {
+        $("#admin-user-area").html(adminUserTemplate({users: data}));
+        setupAdminLinks();
+    });
+    $.get("/api/all_user_trips/", {}, function (data) {
+        $("#admin-trips-area").html(adminTripsTemplate({trips: data}));
+        setupAdminLinks();
+    });
+}
+
+function setupAdminLinks() {
+    function change(url, values) {
+        $.ajax({
+            url: url,
+            method: "PATCH",
+            data: values
+        });
+    }
+
+    function call_delete(url) {
+        $.ajax({
+            url: url,
+            method: "delete",
+            complete: function () {
+                reloadAdminArea();
+            }
+        })
+    }
+
+    $(".admin-update-user").click(function (e) {
+        e.preventDefault();
+        change(
+            "/api/user/" +
+            $(this).parent().siblings(".user-id").html() + "/",
+            {
+                username: $(this).parent().siblings(".username").children("input").val()
+            }
+        );
+    });
+    $(".admin-delete-user").click(function (e) {
+        e.preventDefault();
+        call_delete(
+            "/api/user/" +
+            $(this).parent().siblings(".user-id").html()
+        );
+    });
+    $(".admin-update-trip").click(function (e) {
+        e.preventDefault();
+        change(
+            "/api/user_trips/" +
+            $(this).parent().siblings(".trip-id").html() + "/",
+            {
+                destination: $(this).parent().siblings(".destination").children("input").val()
+            }
+        );
+
+    });
+    $(".admin-delete-trip").click(function (e) {
+        call_delete(
+            "/api/user_trips/" +
+            $(this).parent().siblings(".trip-id").html()
+        );
+        e.preventDefault();
+
+    });
+}
+
+function prepareAdminSite() {
+    var $adminButton = $(".admin-button");
+    var $adminArea = $("#admin-area");
+    $adminButton.show();
+
+    $adminButton.click(function (e) {
+        e.preventDefault();
+        if (!$adminArea.is(':visible')) {
+            $adminArea.show();
+            $("#trip-list").hide();
+            $("#next-prev-page").hide();
+            reloadAdminArea();
+        } else {
+            $adminArea.hide();
+            $("#trip-list").show();
+            $("#next-prev-page").show();
+        }
+    });
 }
 
 $(function () {
@@ -504,8 +600,6 @@ $(function () {
     preparePrintButton($filterBar, $printPlan);
     prepareChangePassword();
     preparePageHandles();
-    var $adminButton = $(".admin-button");
-    prepareAdminSite($adminButton);
 
     $registerForm.submit(function (e) {
         e.preventDefault();

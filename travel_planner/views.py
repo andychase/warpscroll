@@ -92,7 +92,10 @@ def ajax_login(request):
     form = AuthenticationForm(request, data=request.POST)
     if form.is_valid():
         login(request, form.get_user())
-        return JsonResponse({"OK": True})
+        return JsonResponse({
+            "OK": True,
+            "admin": form.get_user().is_staff
+        })
     else:
         return HttpResponseBadRequest("Incorrect username or password")
 

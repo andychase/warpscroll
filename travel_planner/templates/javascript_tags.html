@@ -54,4 +54,38 @@
                   placeholder="Trip comments" name="comment"><%- comment %></textarea>
     </div>
 </script>
+<script type="text/template" id="admin-users-template">
+    <h2>Users</h2>
+    <table>
+        <tbody>
+        <% _.each(users, function (user) { %>
+        <tr>
+            <td class="user-id"><%- user.id %></td>
+            <td class="username"><input type="text" value="<%- user.username %>" title="username"/></td>
+            <td><a href="" class="btn btn-outline-secondary btn-sm admin-update-user">save</a></td>
+            <td><a href="" class="btn btn-outline-danger btn-sm admin-delete-user">delete</a></td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</script>
+<script type="text/template" id="admin-trips-template">
+    <h2>Trips</h2>
+    <table>
+        <tbody>
+        <% _.each(trips, function (trip) { %>
+        <tr>
+            <td class="trip-id"><%- trip.id %></td>
+            <td><%- trip.owner %></td>
+            <td class="destination"><input type="text" value="<%- trip.destination %>" title="destination"/></td>
+            <td><%- trip.start_date %></td>
+            <td><%- trip.end_date %></td>
+            <td><%- trip.comment %></td>
+            <td><a href="" class="btn btn-outline-secondary btn-sm admin-update-trip">save</a></td>
+            <td><a href="" class="btn btn-outline-danger btn-sm admin-delete-trip">delete</a></td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</script>
 <script src="{% static 'travel_planner/script.js' %}"></script>
