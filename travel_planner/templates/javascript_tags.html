@@ -31,18 +31,18 @@
     <div class="card trip-card">
         <h3 class="card-header">
             <input type="text" style="width: 100%" title="Destination" placeholder="Destination" name="destination"
-                   value="<%= destination %>">
+                   value="<%- destination %>">
         </h3>
         <div class="card-block">
             <p class="card-text">
-                <input type="text" name="start_date" value="<%= start_date %>" title="start date"
+                <input type="text" name="start_date" value="<%- start_date %>" title="start date"
                        class="edit-start-date datepicker" data-date-format="yyyy-m-dd">
                 -
-                <input type="text" name="end_date" class="edit-end-date datepicker" value="<%= end_date %>"
+                <input type="text" name="end_date" class="edit-end-date datepicker" value="<%- end_date %>"
                        title="end date" data-date-format="yyyy-m-dd">
                 <span class="date-switched-messages" role="alert"></span>
 
-                <span class="tag tag-default tag-pill days-left-tag"><%= days_left %></span>
+                <span class="tag tag-default tag-pill days-left-tag"><%- days_left %></span>
 
                 <input type="submit" name="save" class="btn btn-outline-danger btn-sm pull-xs-right remove-dest"
                        value="Remove">
@@ -51,7 +51,7 @@
             </p>
         </div>
         <textarea class="trip-description" title="trip description"
-                  placeholder="Trip comments" name="comment"><%= comment %></textarea>
+                  placeholder="Trip comments" name="comment"><%- comment %></textarea>
     </div>
 </script>
 <script src="{% static 'travel_planner/script.js' %}"></script>
