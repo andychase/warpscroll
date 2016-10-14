@@ -114,7 +114,7 @@ class TripSerializer(serializers.HyperlinkedModelSerializer):
             return obj.days_left()
 
     def validate(self, attrs):
-        if attrs['end_date'] < attrs['start_date']:
+        if attrs.get('end_date') and attrs.get('start_date') and attrs['end_date'] < attrs['start_date']:
             attrs['end_date'] = None
         return attrs
 
