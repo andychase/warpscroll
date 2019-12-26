@@ -1,4 +1,4 @@
-django==1.10.2
+django==1.11.23
 djangorestframework==3.4.7
 gunicorn==19.6.0
 dj-database-url==0.4.1
