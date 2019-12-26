@@ -1,9 +1,9 @@
 # Warp Scroll
 *Plan your trip through anywhere*
 
-Warp Scroll is a new type of travel planner which was primary designed with video game players in mind.
-Although it supports traditional travel plans, its unique branding and design inspires creative use cases to
-capture a niche market.
+This project was a coding test, I think I would probably use a calendar realistically.
+
+Warp Scroll is a date-only itinerary planner. You could use it to plan your quests during your iron man speed-run through runescape.
 
 ## Installation
 
