@@ -1,6 +1,8 @@
 # Warp Scroll
 *Plan your trip through anywhere*
 
+![Screenshot showing the software](screen_shot.png)
+
 This project was a coding test, I think I would probably use a calendar realistically.
 
 Warp Scroll is a date-only itinerary planner. You could use it to plan your quests during your iron man speed-run through runescape.
